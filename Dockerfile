@@ -8,7 +8,6 @@ RUN go mod download
 # Copy source code
 COPY examples/ ./examples/
 COPY pkg/ ./pkg/
-COPY go.mod go.sum ./
 
 # Build the web dashboard
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o coffee-dashboard examples/web_dashboard.go
