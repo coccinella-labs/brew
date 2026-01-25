@@ -1,0 +1,58 @@
+---
+repos:
+  - repo: local
+    hooks:
+      - id: firmware-build
+        name: Build firmware
+        entry: bash -c 'make clean && make'
+        language: system
+        files: \.(c|h|s|ld)$
+        pass_filenames: false
+
+      - id: quality-checks
+        name: Run quality analysis
+        entry: ./scripts/quality_simple.sh
+        language: system
+        files: \.(c|h)$
+        pass_filenames: false
+
+      - id: memory-check
+        name: Verify memory limits
+        entry: >
+          bash -c 'make inspect &&
+          FLASH=$(arm-none-eabi-size build/coffee-fw.elf |
+          awk "NR==2 {print \$1}") && test $FLASH -le 262144'
+        language: system
+        files: \.(c|h|s|ld)$
+        pass_filenames: false
+
+      - id: misra-compliance
+        name: MISRA C compliance check
+        entry: >
+          bash -c 'if command -v pc-lint-plus &> /dev/null;
+          then pc-lint-plus -i include/ src/*.c drivers/*.c;
+          else echo "⚠️ PC-lint not available"; fi'
+        language: system
+        files: \.c$
+        pass_filenames: false
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+        args: ['--maxkb=1000']
+
+  - repo: https://github.com/psf/black
+    rev: 23.3.0
+    hooks:
+      - id: black
+        files: \.py$
+
+  - repo: https://github.com/pycqa/flake8
+    rev: 6.0.0
+    hooks:
+      - id: flake8
+        files: \.py$

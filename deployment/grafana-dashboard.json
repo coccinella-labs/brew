@@ -1,0 +1,77 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "Coffee Maker IoT Dashboard",
+    "tags": ["iot", "coffee"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Temperature",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "coffee_temperature_celsius",
+            "legendFormat": "Temperature"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "celsius",
+            "min": 0,
+            "max": 100
+          }
+        },
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0}
+      },
+      {
+        "id": 2,
+        "title": "Water Level",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "coffee_water_level_ml",
+            "legendFormat": "Water Level"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "ml",
+            "min": 0,
+            "max": 300
+          }
+        },
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0}
+      },
+      {
+        "id": 3,
+        "title": "Brew Rate",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(coffee_brews_total[5m])",
+            "legendFormat": "Brews per minute"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 24, "x": 0, "y": 8}
+      },
+      {
+        "id": 4,
+        "title": "Brew Duration",
+        "type": "histogram",
+        "targets": [
+          {
+            "expr": "coffee_brew_duration_seconds",
+            "legendFormat": "Brew time"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 24, "x": 0, "y": 16}
+      }
+    ],
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "refresh": "5s"
+  }
+}

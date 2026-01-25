@@ -1,0 +1,50 @@
+---
+name: Firmware CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install toolchain and quality tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-arm-none-eabi cppcheck
+          npm install -g jscpd lizard
+
+      - name: Build firmware
+        run: make
+
+      - name: Run quality checks
+        run: ./scripts/quality_simple.sh
+
+      - name: Safety checks
+        run: |
+          # Verify reset handler exists
+          arm-none-eabi-nm build/coffee-fw.elf | grep Reset_Handler || exit 1
+
+          # Check stack pointer is set
+          arm-none-eabi-objdump -d build/coffee-fw.elf | grep -q "sp," || exit 1
+
+          # Verify no undefined symbols
+          ! arm-none-eabi-nm build/coffee-fw.elf | grep -q " U "
+
+          # Check memory bounds
+          FLASH=$(arm-none-eabi-size build/coffee-fw.elf | awk 'NR==2 {print $1}')
+          RAM=$(arm-none-eabi-size build/coffee-fw.elf | awk 'NR==2 {print $2}')
+          test $FLASH -le 262144  # 256KB max
+          test $RAM -le 65536     # 64KB max
+
+          echo "✅ All safety checks passed"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware-${{ github.sha }}
+          path: |
+            build/*.elf
+            build/*.bin

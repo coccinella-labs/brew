@@ -1,0 +1,29 @@
+// MISRA C compliance rules for embedded firmware
+-i include/
+-i startup/
+
+// Enable MISRA C:2012 rules
++libclass(angle,foreign)
+-strong(AXJ)
+
+// Critical safety rules
++e9003  // could define variable at block scope
++e9007  // side effect on right hand side of logical operator
++e9013  // no explicit else at end of if-else-if chain
++e9016  // pointer arithmetic other than array indexing used
++e9026  // function-like macro defined
++e9045  // non-hidden definition of type with tag
++e9048  // unsigned integer literal without a 'U' suffix
++e9050  // dependence placed on C's operator precedence
++e9051  // use of conversion from pointer to void to pointer to other type
++e9052  // conversion from pointer to void to pointer to other type
++e9053  // conversion from pointer to object to pointer to void
++e9054  // conversion from pointer to function to pointer to void
++e9055  // conversion from pointer to incomplete type to pointer to object
++e9056  // conversion from pointer to object to pointer to incomplete type
++e9057  // conversion from pointer to object to pointer to function
++e9058  // conversion from pointer to function to pointer to object
+
+// Suppress vendor-specific warnings
+-esym(9003, Reset_Handler)  // Startup symbols
+-esym(9003, vector_table)   // Vector table

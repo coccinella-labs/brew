@@ -1,0 +1,52 @@
+# Build artifacts
+build/
+*.elf
+*.bin
+*.hex
+*.map
+*.lst
+
+# Object files
+*.o
+*.obj
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# Temporary files
+*.tmp
+recursive_calls.tmp
+
+# IDE files
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Certificates and keys
+*.pem
+*.key
+cert.pem
+private.key
+public.key
+
+# Go build artifacts
+coffee-dashboard
+coffee-sim
+
+# Node modules (if using npm tools)
+node_modules/
+
+# Quality check reports
+jscpd-report.json
+lizard-report.xml
+
+# OpenOCD logs
+openocd.log

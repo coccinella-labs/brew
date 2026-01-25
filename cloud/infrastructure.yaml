@@ -1,0 +1,106 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Coffee Maker IoT Infrastructure'
+
+Resources:
+  # DynamoDB table for analytics
+  CoffeeAnalyticsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: coffee-analytics
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: device_id
+          AttributeType: S
+        - AttributeName: timestamp
+          AttributeType: N
+      KeySchema:
+        - AttributeName: device_id
+          KeyType: HASH
+        - AttributeName: timestamp
+          KeyType: RANGE
+
+  # IoT Core thing
+  CoffeeMakerThing:
+    Type: AWS::IoT::Thing
+    Properties:
+      ThingName: coffee-maker-001
+
+  # IoT policy
+  CoffeeMakerPolicy:
+    Type: AWS::IoT::Policy
+    Properties:
+      PolicyName: CoffeeMakerPolicy
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - iot:Connect
+              - iot:Publish
+              - iot:Subscribe
+              - iot:Receive
+            Resource: '*'
+
+  # Lambda for processing IoT data
+  CoffeeDataProcessor:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: coffee-data-processor
+      Runtime: python3.9
+      Handler: index.handler
+      Code:
+        ZipFile: |
+          import json
+          import boto3
+
+          dynamodb = boto3.resource('dynamodb')
+          table = dynamodb.Table('coffee-analytics')
+
+          def handler(event, context):
+              for record in event['Records']:
+                  # Process IoT messages
+                  payload = json.loads(record['body'])
+                  table.put_item(Item=payload)
+
+              return {'statusCode': 200}
+      Role:
+        Fn::GetAtt:
+          - LambdaExecutionRole
+          - Arn
+
+  # Lambda execution role
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: DynamoDBAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:PutItem
+                  - dynamodb:GetItem
+                  - dynamodb:Query
+                Resource: "*"
+
+Outputs:
+  TableName:
+    Description: DynamoDB table name
+    Value:
+      Ref: CoffeeAnalyticsTable
+
+  ThingName:
+    Description: IoT thing name
+    Value:
+      Ref: CoffeeMakerThing

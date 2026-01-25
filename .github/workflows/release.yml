@@ -1,0 +1,52 @@
+---
+name: Release firmware
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install ARM toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-arm-none-eabi
+
+      - name: Build release firmware
+        run: |
+          make clean
+          make CFLAGS="-mcpu=cortex-m4 -mthumb -O2 -DNDEBUG"
+
+      - name: Generate checksums
+        run: |
+          cd build
+          sha256sum *.elf *.bin > checksums.txt
+          cat checksums.txt
+
+      - name: Create release notes
+        run: |
+          echo "## Coffee Maker Firmware ${GITHUB_REF#refs/tags/}" > release_notes.md
+          echo "" >> release_notes.md
+          echo "### Memory Usage" >> release_notes.md
+          arm-none-eabi-size build/coffee-fw.elf >> release_notes.md
+          echo "" >> release_notes.md
+          echo "### Checksums" >> release_notes.md
+          cat build/checksums.txt >> release_notes.md
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v1
+        with:
+          body_path: release_notes.md
+          files: |
+            build/coffee-fw.elf
+            build/coffee-fw.bin
+            build/checksums.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

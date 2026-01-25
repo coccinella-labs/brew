@@ -1,0 +1,73 @@
+---
+version: '3.8'
+
+services:
+  # Coffee maker application
+  coffee-app:
+    build: .
+    ports:
+      - "8080:8080"
+      - "9090:9090"
+    environment:
+      - MQTT_BROKER=mqtt://mosquitto:1883
+    depends_on:
+      - mosquitto
+      - prometheus
+    networks:
+      - coffee-net
+
+  # MQTT broker
+  mosquitto:
+    image: eclipse-mosquitto:2.0
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./deployment/mosquitto.conf:/mosquitto/config/mosquitto.conf
+    networks:
+      - coffee-net
+
+  # Prometheus monitoring
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9091:9090"
+    volumes:
+      - ./deployment/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+    networks:
+      - coffee-net
+
+  # Grafana dashboards
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - ./deployment/grafana-dashboard.json:/var/lib/grafana/dashboards/coffee.json
+    depends_on:
+      - prometheus
+    networks:
+      - coffee-net
+
+  # Redis for caching
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - coffee-net
+
+volumes:
+  grafana-storage:
+
+networks:
+  coffee-net:
+    driver: bridge
