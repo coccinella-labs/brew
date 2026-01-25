@@ -22,7 +22,7 @@ jobs:
       - name: Build release firmware
         run: |
           make clean
-          make CFLAGS="-mcpu=cortex-m4 -mthumb -O2 -DNDEBUG"
+          make CFLAGS="-mcpu=cortex-m4 -mthumb -O2 -DNDEBUG -Iinclude -Istartup -Iboard/"
 
       - name: Generate checksums
         run: |
