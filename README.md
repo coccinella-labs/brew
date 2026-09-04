@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/basebin/brew/main/.github/assets/thumbnail.png" alt="brew" width="100%">
+</p>
+
 # Coffee Maker Firmware
 
 The official bare-metal firmware for IoT coffee makers with ARM Cortex-M4 microcontrollers.
