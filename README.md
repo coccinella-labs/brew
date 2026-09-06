@@ -1,12 +1,12 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/basebin/brew/main/.github/assets/thumbnail.png" alt="brew" width="100%">
+  <img src="https://raw.githubusercontent.com/Coccinella-Labs/brew/main/.github/assets/thumbnail.png" alt="brew" width="100%">
 </p>
 
 # Coffee Maker Firmware
 
 The official bare-metal firmware for IoT coffee makers with ARM Cortex-M4 microcontrollers.
 
-[![CI](https://github.com/harpertoken/brew/actions/workflows/ci.yml/badge.svg)](https://github.com/harpertoken/brew/actions/workflows/ci.yml)
+[![CI](https://github.com/Coccinella-Labs/brew/actions/workflows/ci.yml/badge.svg)](https://github.com/Coccinella-Labs/brew/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Installation
@@ -27,7 +27,7 @@ sudo pacman -S arm-none-eabi-gcc
 ### Build
 
 ```bash
-git clone https://github.com/harpertoken/brew.git
+git clone https://github.com/Coccinella-Labs/brew.git
 cd brew
 make clean && make
 ```
@@ -241,8 +241,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Support
 
 - **Documentation**: [docs/](docs/)
-- **Issues**: [GitHub Issues](https://github.com/harpertoken/brew/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/harpertoken/brew/discussions)
+- **Issues**: [GitHub Issues](https://github.com/Coccinella-Labs/brew/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/Coccinella-Labs/brew/discussions)
 
 ---
 
