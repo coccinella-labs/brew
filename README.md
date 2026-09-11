@@ -39,7 +39,7 @@ make clean && make
 docker pull ghcr.io/harpertoken/brew:latest
 
 # Pull from Docker Hub
-docker pull harpertoken/brew:latest
+docker pull coccinella-labs/brew:latest
 
 # Run the coffee maker dashboard
 docker run -p 8080:8080 ghcr.io/harpertoken/brew:latest
@@ -246,4 +246,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Copyright (c) 2026 harpertoken**
+**Copyright (c) 2026 coccinella-labs**

@@ -18,7 +18,7 @@ pip install pre-commit
 ### Setup
 
 ```bash
-git clone https://github.com/harpertoken/brew.git
+git clone https://github.com/coccinella-labs/brew.git
 cd brew
 ./setup_dev.sh
 pre-commit install
